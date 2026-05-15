@@ -1,0 +1,3 @@
+[database]
+# Used by sqlx-cli for migrations
+# Set DATABASE_URL in .env or environment

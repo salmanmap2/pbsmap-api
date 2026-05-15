@@ -1,0 +1,31 @@
+[package]
+name = "pbsmap_api"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "pbsmap_api"
+path = "src/main.rs"
+
+[dependencies]
+actix-web = "4"
+actix-cors = "0.7"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "mysql", "chrono", "uuid"] }
+tokio = { version = "1", features = ["full"] }
+bcrypt = "0.15"
+jsonwebtoken = "9"
+uuid = { version = "1", features = ["v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+rand = "0.8"
+lettre = { version = "0.11", features = ["tokio1", "tokio1-native-tls"] }
+reqwest = { version = "0.11", features = ["json"] }
+dotenv = "0.15"
+anyhow = "1"
+thiserror = "1"
+log = "0.4"
+env_logger = "0.11"
+base64 = "0.21"
+hex = "0.4"
+sha2 = "0.10"
