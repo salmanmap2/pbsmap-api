@@ -56,10 +56,7 @@ pub async fn add_note(
         Err(_) => return errors::internal_error("Database error"),
     };
 
-    let office_user_json: serde_json::Value = office.office_user_json
-        .as_deref()
-        .and_then(|s| serde_json::from_str(s).ok())
-        .unwrap_or(json!({}));
+    let office_user_json: serde_json::Value = office.office_user_json.clone().unwrap_or(json!({}));
 
     if !user_has_role(&office_user_json, &claims.sub, &["admin", "editor", "viewer"]) {
         return errors::forbidden("You are not a member of this office");
@@ -136,10 +133,7 @@ pub async fn get_all_notes(
         Err(_) => return errors::internal_error("Database error"),
     };
 
-    let office_user_json: serde_json::Value = office.office_user_json
-        .as_deref()
-        .and_then(|s| serde_json::from_str(s).ok())
-        .unwrap_or(json!({}));
+    let office_user_json: serde_json::Value = office.office_user_json.clone().unwrap_or(json!({}));
 
     if !user_has_role(&office_user_json, &claims.sub, &["admin", "editor", "viewer"]) {
         return errors::forbidden("You are not a member of this office");
@@ -158,10 +152,7 @@ pub async fn get_all_notes(
     };
 
     let result: Vec<serde_json::Value> = notes.iter().map(|n| {
-        let note_data: serde_json::Value = n.note_json
-            .as_deref()
-            .and_then(|s| serde_json::from_str(s).ok())
-            .unwrap_or(json!({}));
+        let note_data = n.note_json.clone().unwrap_or(json!({}));
         json!({
             "note_id": n.note_id,
             "account_id": n.account_id,

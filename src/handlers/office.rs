@@ -43,10 +43,7 @@ pub async fn user_change(
         Err(_) => return errors::internal_error("Database error"),
     };
 
-    let mut users: Value = office.office_user_json
-        .as_deref()
-        .and_then(|s| serde_json::from_str(s).ok())
-        .unwrap_or(json!({}));
+    let mut users: Value = office.office_user_json.clone().unwrap_or(json!({}));
 
     ensure_user_json_keys(&mut users);
 

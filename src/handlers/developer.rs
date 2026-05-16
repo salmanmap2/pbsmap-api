@@ -113,14 +113,8 @@ pub async fn all_office(
     match db::get_offices_by_pbs(&state.db, pbs_id).await {
         Ok(offices) => {
             let result: Vec<Value> = offices.iter().map(|o| {
-                let info: Value = o.office_info_json
-                    .as_deref()
-                    .and_then(|s| serde_json::from_str(s).ok())
-                    .unwrap_or(json!({}));
-                let users: Value = o.office_user_json
-                    .as_deref()
-                    .and_then(|s| serde_json::from_str(s).ok())
-                    .unwrap_or(json!({}));
+                let info = o.office_info_json.clone().unwrap_or(json!({}));
+                let users = o.office_user_json.clone().unwrap_or(json!({}));
                 json!({
                     "office_id": o.office_id,
                     "pbs_id": o.pbs_id,
@@ -197,10 +191,7 @@ pub async fn user_manage(
         Err(_) => return errors::internal_error("Database error"),
     };
 
-    let mut users: Value = office.office_user_json
-        .as_deref()
-        .and_then(|s| serde_json::from_str(s).ok())
-        .unwrap_or(json!({}));
+    let mut users: Value = office.office_user_json.clone().unwrap_or(json!({}));
 
     ensure_user_json_keys(&mut users);
 

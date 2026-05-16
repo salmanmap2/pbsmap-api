@@ -162,10 +162,7 @@ pub async fn login(
         Err(_) => return errors::internal_error("Failed to create token"),
     };
 
-    let user_json: Value = user.user_json
-        .as_deref()
-        .and_then(|s| serde_json::from_str(s).ok())
-        .unwrap_or(json!({}));
+    let user_json: Value = user.user_json.clone().unwrap_or(json!({}));
 
     errors::ok("Login successful", json!({
         "username": user.username,
@@ -211,10 +208,7 @@ pub async fn google_login(
             Ok(t) => t,
             Err(_) => return errors::internal_error("Failed to create token"),
         };
-        let user_json: Value = user.user_json
-            .as_deref()
-            .and_then(|s| serde_json::from_str(s).ok())
-            .unwrap_or(json!({}));
+        let user_json: Value = user.user_json.clone().unwrap_or(json!({}));
         return errors::ok("Login successful", json!({
             "username": user.username,
             "email": user.email,
@@ -234,10 +228,7 @@ pub async fn google_login(
                 Ok(t) => t,
                 Err(_) => return errors::internal_error("Failed to create token"),
             };
-            let user_json: Value = user.user_json
-                .as_deref()
-                .and_then(|s| serde_json::from_str(s).ok())
-                .unwrap_or(json!({}));
+            let user_json: Value = user.user_json.clone().unwrap_or(json!({}));
             return errors::ok("Login successful (Google linked to existing account)", json!({
                 "username": user.username,
                 "email": user.email,
@@ -311,10 +302,7 @@ pub async fn forgot_password(
     let otp_time = Utc::now().timestamp();
 
     // Update app_json with OTP
-    let current_app_json: Value = user.app_json
-        .as_deref()
-        .and_then(|s| serde_json::from_str(s).ok())
-        .unwrap_or(json!({}));
+    let current_app_json: Value = user.app_json.clone().unwrap_or(json!({}));
 
     let mut app_json = current_app_json;
     app_json["temp_reset_otp"] = json!(otp);
@@ -390,14 +378,11 @@ pub async fn reset_password(
     }
 
     // Clear OTP from app_json
-    let mut app_json: Value = user.app_json
-        .as_deref()
-        .and_then(|s| serde_json::from_str(s).ok())
-        .unwrap_or(json!({}));
-    app_json.as_object_mut().map(|o| {
+    let mut app_json: Value = user.app_json.clone().unwrap_or(json!({}));
+    if let Some(o) = app_json.as_object_mut() {
         o.remove("temp_reset_otp");
         o.remove("temp_reset_otp_time");
-    });
+    }
     let _ = db::update_user_app_json(&state.db, &user.username, &app_json.to_string()).await;
 
     errors::ok_simple("Password reset successful")
@@ -406,10 +391,7 @@ pub async fn reset_password(
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 fn validate_otp(user: &crate::models::UserProfile, otp: &str) -> Result<(), String> {
-    let app_json: Value = user.app_json
-        .as_deref()
-        .and_then(|s| serde_json::from_str(s).ok())
-        .unwrap_or(json!({}));
+    let app_json: Value = user.app_json.clone().unwrap_or(json!({}));
 
     let stored_otp = app_json["temp_reset_otp"].as_str().unwrap_or("");
     let stored_time = app_json["temp_reset_otp_time"].as_i64().unwrap_or(0);

@@ -25,14 +25,8 @@ pub async fn offices_by_pbs(
     match db::get_offices_by_pbs(&state.db, pbs_id).await {
         Ok(offices) => {
             let result: Vec<serde_json::Value> = offices.iter().map(|o| {
-                let info: serde_json::Value = o.office_info_json
-                    .as_deref()
-                    .and_then(|s| serde_json::from_str(s).ok())
-                    .unwrap_or(json!({}));
-                let users: serde_json::Value = o.office_user_json
-                    .as_deref()
-                    .and_then(|s| serde_json::from_str(s).ok())
-                    .unwrap_or(json!({}));
+                let info = o.office_info_json.clone().unwrap_or(json!({}));
+                let users = o.office_user_json.clone().unwrap_or(json!({}));
                 json!({
                     "office_id": o.office_id,
                     "pbs_id": o.pbs_id,
@@ -58,14 +52,8 @@ pub async fn office_by_id(
     let office_id = path.into_inner();
     match db::get_office_by_id(&state.db, &office_id).await {
         Ok(Some(o)) => {
-            let info: serde_json::Value = o.office_info_json
-                .as_deref()
-                .and_then(|s| serde_json::from_str(s).ok())
-                .unwrap_or(json!({}));
-            let users: serde_json::Value = o.office_user_json
-                .as_deref()
-                .and_then(|s| serde_json::from_str(s).ok())
-                .unwrap_or(json!({}));
+            let info = o.office_info_json.clone().unwrap_or(json!({}));
+            let users = o.office_user_json.clone().unwrap_or(json!({}));
             errors::ok("Office fetched", json!({
                 "office_id": o.office_id,
                 "pbs_id": o.pbs_id,
@@ -90,10 +78,7 @@ pub async fn user_by_mobile(
     let mobile = path.into_inner();
     match db::find_user_by_mobile(&state.db, &mobile).await {
         Ok(Some(user)) => {
-            let user_json: serde_json::Value = user.user_json
-                .as_deref()
-                .and_then(|s| serde_json::from_str(s).ok())
-                .unwrap_or(json!({}));
+            let user_json = user.user_json.clone().unwrap_or(json!({}));
             errors::ok("User found", json!({
                 "username": user.username,
                 "mobile_number": user.mobile_number,

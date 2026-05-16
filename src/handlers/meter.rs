@@ -66,10 +66,7 @@ pub async fn add_meter(
         Err(_) => return errors::internal_error("Database error"),
     };
 
-    let office_user_json: serde_json::Value = office.office_user_json
-        .as_deref()
-        .and_then(|s| serde_json::from_str(s).ok())
-        .unwrap_or(json!({}));
+    let office_user_json: serde_json::Value = office.office_user_json.clone().unwrap_or(json!({}));
 
     if !user_has_role(&office_user_json, &claims.sub, &["admin", "editor"]) {
         return errors::forbidden("You must be an admin or editor of this office");
@@ -127,10 +124,7 @@ pub async fn edit_meter(
         Err(_) => return errors::internal_error("Database error"),
     };
 
-    let office_user_json: serde_json::Value = office.office_user_json
-        .as_deref()
-        .and_then(|s| serde_json::from_str(s).ok())
-        .unwrap_or(json!({}));
+    let office_user_json: serde_json::Value = office.office_user_json.clone().unwrap_or(json!({}));
 
     if !user_has_role(&office_user_json, &claims.sub, &["admin", "editor"]) {
         return errors::forbidden("You must be an admin or editor of this office");
@@ -179,10 +173,7 @@ pub async fn all_meter_list(
         Err(_) => return errors::internal_error("Database error"),
     };
 
-    let office_user_json: serde_json::Value = office.office_user_json
-        .as_deref()
-        .and_then(|s| serde_json::from_str(s).ok())
-        .unwrap_or(json!({}));
+    let office_user_json: serde_json::Value = office.office_user_json.clone().unwrap_or(json!({}));
 
     if !user_has_role(&office_user_json, &claims.sub, &["admin", "editor", "viewer"]) {
         return errors::forbidden("You are not a member of this office");
@@ -201,14 +192,8 @@ pub async fn all_meter_list(
     };
 
     let result: Vec<serde_json::Value> = meters.iter().map(|m| {
-        let account_info: serde_json::Value = m.account_info_json
-            .as_deref()
-            .and_then(|s| serde_json::from_str(s).ok())
-            .unwrap_or(json!({}));
-        let meter_info: serde_json::Value = m.meter_info_json
-            .as_deref()
-            .and_then(|s| serde_json::from_str(s).ok())
-            .unwrap_or(json!({}));
+        let account_info = m.account_info_json.clone().unwrap_or(json!({}));
+        let meter_info = m.meter_info_json.clone().unwrap_or(json!({}));
         json!({
             "account_id": m.account_id,
             "office_id": m.office_id,

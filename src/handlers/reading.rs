@@ -61,10 +61,7 @@ pub async fn new_reading(
         Err(_) => return errors::internal_error("Database error"),
     };
 
-    let office_user_json: serde_json::Value = office.office_user_json
-        .as_deref()
-        .and_then(|s| serde_json::from_str(s).ok())
-        .unwrap_or(json!({}));
+    let office_user_json: serde_json::Value = office.office_user_json.clone().unwrap_or(json!({}));
 
     if !user_has_role(&office_user_json, &claims.sub, &["admin", "editor", "viewer"]) {
         return errors::forbidden("You are not a member of this office");
@@ -110,10 +107,7 @@ pub async fn edit_reading(
     if !account_id_to_check.is_empty() {
         if let Ok(Some(meter)) = db::get_meter_by_account_id(&state.db, account_id_to_check).await {
             if let Ok(Some(office)) = db::get_office_by_id(&state.db, &meter.office_id).await {
-                let office_user_json: serde_json::Value = office.office_user_json
-                    .as_deref()
-                    .and_then(|s| serde_json::from_str(s).ok())
-                    .unwrap_or(json!({}));
+                let office_user_json: serde_json::Value = office.office_user_json.clone().unwrap_or(json!({}));
 
                 if !user_has_role(&office_user_json, &claims.sub, &["admin", "editor"]) {
                     return errors::forbidden("You must be an admin or editor");
@@ -163,10 +157,7 @@ pub async fn get_all_readings(
         Err(_) => return errors::internal_error("Database error"),
     };
 
-    let office_user_json: serde_json::Value = office.office_user_json
-        .as_deref()
-        .and_then(|s| serde_json::from_str(s).ok())
-        .unwrap_or(json!({}));
+    let office_user_json: serde_json::Value = office.office_user_json.clone().unwrap_or(json!({}));
 
     if !user_has_role(&office_user_json, &claims.sub, &["admin", "editor", "viewer"]) {
         return errors::forbidden("You are not a member of this office");
@@ -191,10 +182,7 @@ pub async fn get_all_readings(
     };
 
     let result: Vec<serde_json::Value> = readings.iter().map(|r| {
-        let reading_data: serde_json::Value = r.reading_json
-            .as_deref()
-            .and_then(|s| serde_json::from_str(s).ok())
-            .unwrap_or(json!({}));
+        let reading_data = r.reading_json.clone().unwrap_or(json!({}));
         json!({
             "reading_id": r.reading_id,
             "account_id": r.account_id,

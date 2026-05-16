@@ -48,10 +48,7 @@ pub async fn get_profile(
         Err(_) => return errors::internal_error("Database error"),
     };
 
-    let user_json: serde_json::Value = user.user_json
-        .as_deref()
-        .and_then(|s| serde_json::from_str(s).ok())
-        .unwrap_or(json!({}));
+    let user_json: serde_json::Value = user.user_json.clone().unwrap_or(json!({}));
 
     errors::ok("Profile fetched", json!({
         "username": user.username,
@@ -81,10 +78,7 @@ pub async fn update_profile(
     };
 
     // Merge user_json fields
-    let mut user_json: serde_json::Value = user.user_json
-        .as_deref()
-        .and_then(|s| serde_json::from_str(s).ok())
-        .unwrap_or(json!({}));
+    let mut user_json: serde_json::Value = user.user_json.clone().unwrap_or(json!({}));
 
     if let Some(ref full_name) = body.full_name {
         user_json["full_name"] = json!(full_name);
@@ -210,10 +204,7 @@ pub async fn join_office(
         Err(_) => return errors::internal_error("Database error"),
     };
 
-    let mut office_user_json: serde_json::Value = office.office_user_json
-        .as_deref()
-        .and_then(|s| serde_json::from_str(s).ok())
-        .unwrap_or(json!({
+    let mut office_user_json: serde_json::Value = office.office_user_json.clone().unwrap_or(json!({
             "pending_users": [],
             "admin_users": [],
             "editor_users": [],

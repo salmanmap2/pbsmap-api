@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use chrono::NaiveDateTime;
 
 // ─── User Profile ───────────────────────────────────────────────────────────
@@ -10,8 +11,8 @@ pub struct UserProfile {
     pub mobile_number: Option<String>,
     pub email: Option<String>,
     pub password: Option<String>,
-    pub app_json: Option<String>,
-    pub user_json: Option<String>,
+    pub app_json: Option<Value>,
+    pub user_json: Option<Value>,
     pub active_office: Option<String>,
     pub user_api_key: String,
     pub google_id: Option<String>,
@@ -32,8 +33,8 @@ pub struct Office {
     pub office_id: String,
     pub pbs_id: u32,
     pub office_name: String,
-    pub office_info_json: Option<String>,
-    pub office_user_json: Option<String>,
+    pub office_info_json: Option<Value>,
+    pub office_user_json: Option<Value>,
 }
 
 // ─── Meter Info ──────────────────────────────────────────────────────────────
@@ -43,11 +44,11 @@ pub struct MeterInfo {
     pub account_id: String,
     pub office_id: String,
     pub account_number: String,
-    pub account_info_json: Option<String>,
+    pub account_info_json: Option<Value>,
     pub route_number: Option<String>,
     pub village: Option<String>,
     pub meter_number: Option<String>,
-    pub meter_info_json: Option<String>,
+    pub meter_info_json: Option<Value>,
     pub gps_location: Option<String>,
     pub updated_at: Option<NaiveDateTime>,
 }
@@ -58,7 +59,7 @@ pub struct MeterInfo {
 pub struct Note {
     pub note_id: String,
     pub account_id: String,
-    pub note_json: Option<String>,
+    pub note_json: Option<Value>,
     pub note_creator: String,
     pub timestamp: Option<NaiveDateTime>,
 }
@@ -70,7 +71,7 @@ pub struct MeterReading {
     pub reading_id: String,
     pub account_id: String,
     pub date_time: Option<NaiveDateTime>,
-    pub reading_json: Option<String>,
+    pub reading_json: Option<Value>,
     pub reader_username: String,
 }
 
